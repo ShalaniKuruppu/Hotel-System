@@ -18,7 +18,13 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails details){
-        return Jwts.builder().setClaims(extraClaims).setSubject(details.getUsername()).setIssuedAt(new Date(System.currentTimeMillis() + 1000*60*60*24)).setExpiration(new Date(System.currentTimeMillis())).signWith(SignatureAlgorithm.HS256, getSigningKey()).compact();
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(details.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*60*24))
+                .signWith(SignatureAlgorithm.HS256, getSigningKey())
+                .compact();
     }
 
     public String generateToken(UserDetails userDetails){

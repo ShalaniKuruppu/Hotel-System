@@ -1,11 +1,3 @@
-// This is a JWT authentication filter.
-// It runs before every request in your backend to:
-//     Read the JWT token from the request header
-//     Validate the token
-//     Identify the user
-//     Tell Spring Security that the user is authenticated
-// It extends OncePerRequestFilter, so it runs exactly once for every HTTP request.
-
 package com.example.HotelServer.configs;
 
 import com.example.HotelServer.services.jwt.UserService;
@@ -35,7 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        if(StringUtils.isEmpty(authHeader) || StringUtils.startsWith(authHeader, "Bearer")){
+        
+        System.out.println("=== JWT Filter START ===");
+        System.out.println("Auth Header: " + authHeader);
+        
+        if(StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer")){
+            System.out.println("No Bearer token - skipping JWT authentication");
             filterChain.doFilter(request, response);
             return;
         }
@@ -43,9 +40,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         final String userEmail;
         userEmail = jwtUtil.extractUserName(jwt);
+        
+        System.out.println("=== JWT Filter ===");
+        System.out.println("Email from token: " + userEmail);
+        
         if(StringUtils.isNoneEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
+            System.out.println("User authorities: " + userDetails.getAuthorities());
+            
             if(jwtUtil.isTokenValid(jwt, userDetails)){
+                System.out.println("Token is VALID");
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -54,9 +58,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
+            } else {
+                System.out.println("Token is INVALID");
             }
-            filterChain.doFilter(request, response);
         }
-
+        filterChain.doFilter(request, response);
     }
 }

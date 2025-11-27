@@ -2,6 +2,8 @@ package com.example.HotelServer.controller.admin;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +30,15 @@ public class RoomsController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-    }   
+    } 
+    
+    @GetMapping("/rooms/{pageNumber}")
+    public ResponseEntity<?> getAllRooms(@PathVariable int pageNumber) {
+        System.out.println("=== INSIDE getAllRooms Controller ===");
+        System.out.println("Page Number: " + pageNumber);
+        return ResponseEntity.ok(roomsService.getAllRooms(pageNumber));
+    }
+
     
     
     

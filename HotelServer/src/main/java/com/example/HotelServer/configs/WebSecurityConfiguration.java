@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.HotelServer.enums.UserRole;
 import com.example.HotelServer.services.jwt.UserService;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +19,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -25,12 +27,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 public class WebSecurityConfiguration {
 
         private final UserService userService;
+
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http.csrf(AbstractHttpConfigurer::disable)
                         .authorizeHttpRequests(request -> request
                                 .requestMatchers("/api/auth/**").permitAll()
-                        );
+                                .requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
+                                .requestMatchers("/api/customer/**").hasAnyAuthority(UserRole.CUSTOMER.name())
+                                .anyRequest().authenticated())
+                                .sessionManagement(manager-> manager.sessionCreationPolicy(STATELESS))
+                                .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        
                 return http.build();
         }
 

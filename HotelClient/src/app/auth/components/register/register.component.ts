@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { Form, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,7 +12,9 @@ import { Form, FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class RegisterComponent {
 
   registerForm!: FormGroup;
-  constructor(private fb: FormBuilder,) { }
+  constructor(private fb: FormBuilder, private authService: AuthService , private message: NzMessageService,
+    private router: Router
+  ) { }
   ngOnInit(){
     this.registerForm = this.fb.group({
       name: [null,[Validators.required]],
@@ -18,5 +23,17 @@ export class RegisterComponent {
       
     });
   }
+
+  submitForm(){
+      this.authService.register(this.registerForm.value).subscribe(res=>{
+        if(res.id != null){
+          this.message.success("SignUp Successful!", { nzDuration: 5000 });
+          this.router.navigateByUrl('/');
+        }else{
+          this.message.error(`${res.message}`, { nzDuration: 5000 });
+        }
+      })
+  }
+
 
 }

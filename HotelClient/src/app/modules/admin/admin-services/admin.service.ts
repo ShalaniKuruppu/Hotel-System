@@ -29,6 +29,12 @@ export class AdminService {
     });
   }
 
+  updateRoomDetails(id: number, roomDto: any): Observable<any>{
+    return this.http.put(BASIC_URL + `api/admin/room/${id}`,roomDto,{
+      headers: this.createAuthorizationHeader()
+    });
+  }
+
 
   createAuthorizationHeader(){
     let authHeaders: HttpHeaders = new HttpHeaders();

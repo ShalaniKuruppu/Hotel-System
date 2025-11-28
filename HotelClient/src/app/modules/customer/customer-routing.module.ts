@@ -7,7 +7,7 @@ import { ViewBookingsComponent } from './components/view-bookings/view-bookings.
 const routes: Routes = [
   { path: '', component: CustomerComponent },
   { path: 'rooms', component: RoomsComponent },
-  { path: 'bookings', component: ViewBookingsComponent }
+  { path: 'book', component: ViewBookingsComponent }
 
 ];
 

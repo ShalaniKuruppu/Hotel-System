@@ -9,5 +9,7 @@ public interface RoomsService {
 
     RoomsResponseDto getAllRooms(int pageNumber);
 
+    RoomDto getRoomById(Long id);
+
 }
 

@@ -1,5 +1,6 @@
 package com.example.HotelServer.services.admin.rooms;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +10,9 @@ import com.example.HotelServer.dto.RoomDto;
 import com.example.HotelServer.dto.RoomsResponseDto;
 import com.example.HotelServer.entity.Room;
 import com.example.HotelServer.repository.RoomRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +48,15 @@ public class RoomsServiceImpl implements RoomsService {
         roomsResponseDto.setRoomDtoList(roomPage.stream().map(Room::getRoomDto).collect(Collectors.toList()));
 
         return roomsResponseDto;
+    }
+
+    public RoomDto getRoomById(Long id){
+        Optional<Room> optionalRoom = roomRepository.findById(id);
+        if(optionalRoom.isPresent()){
+            return optionalRoom.get().getRoomDto();
+        }else{
+            throw new EntityNotFoundException("Room not present.");
+        }
     }
 
 }

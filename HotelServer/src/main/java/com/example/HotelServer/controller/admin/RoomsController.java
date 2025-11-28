@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.HotelServer.dto.RoomDto;
 import com.example.HotelServer.services.admin.rooms.RoomsService;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 
@@ -39,7 +40,16 @@ public class RoomsController {
         return ResponseEntity.ok(roomsService.getAllRooms(pageNumber));
     }
 
-    
+    @GetMapping("/room/{id}")
+    public ResponseEntity<?> getRoomById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(roomsService.getRoomById(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
+        }
+    }
     
     
 }

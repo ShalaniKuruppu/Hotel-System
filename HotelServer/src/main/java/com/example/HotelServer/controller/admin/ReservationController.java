@@ -26,14 +26,14 @@ public class ReservationController {
         }
     }
 
-    // @GetMapping("/reservation/{id}/{status}")
-    // public ResponseEntity<?> changeReservationStatus(@PathVariable Long id, @PathVariable String status){
-    //     boolean success = reservationService.changeReservationStatus(id, status);
+    @GetMapping("/reservation/{id}/{status}")
+    public ResponseEntity<?> changeReservationStatus(@PathVariable Long id, @PathVariable String status){
+        boolean success = reservationService.changeReservationStatus(id, status);
 
-    //     if(success){
-    //         return ResponseEntity.ok().build();
-    //     }else{
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
-    //     }
-    // }
+        if(success){
+            return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        }
+    }
 }
